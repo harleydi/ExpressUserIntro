@@ -27,6 +27,16 @@ app.get("/single-user/:phoneNumber", (req, res) => {
 })
 
 
+// GET some users
+app.get("/some-users/:countryName", (req, res) => {
+    const country = req.params.countryName
+    const getUsersByCountry = userList.filter((user) => {
+        return user.location.country.toLowerCase() === country.toLowerCase()
+    })
+    res.status(200).json({ data: getUsersByCountry })
+})
+
+
 app.listen(PORT, () => {
     console.log(`Example app listening on port ${PORT}`);
 })
