@@ -1,10 +1,12 @@
 const express = require('express')
 
 const app = express()
+
+app.use(express.json())
+
 const PORT = 3000
 const userList = require("./userData")
 
-app.use(express.json())
 
 app.get("/", (req, res) => {
     res.send("Hello World")
@@ -34,6 +36,42 @@ app.get("/some-users/:countryName", (req, res) => {
         return user.location.country.toLowerCase() === country.toLowerCase()
     })
     res.status(200).json({ data: getUsersByCountry })
+})
+
+
+// POST new user
+app.post("/new-user", (req, res) => {
+    const newUser = {
+        gender: req.body.gender,
+        name: {
+            title: req.body.name.title,
+            first: req.body.name.first,
+            last: req.body.name.last,
+        },
+        location: {
+            city: req.body.location.city,
+            state: req.body.location.state,
+            country: req.body.location.country,
+            postcode: req.body.location.postcode,
+        },
+        email: req.body.email,
+        phone: req.body.phone,
+        cell: req.body.cell,
+        nat: req.body.nat
+    }
+
+    let errorArr = []
+    for (let key in newUser) {
+        if (newUser[key] === '' || newUser[key] === undefined) {
+            errorArr.push(`${key} cannot be empty`)
+        }
+    }
+    if (errorArr.length > 0) {
+        res.status(500).json({ error: true, message: errorArr })
+    } else {
+        userList.push(newUser)
+    }
+    res.status(200).json({ message: 'Success' })
 })
 
 
