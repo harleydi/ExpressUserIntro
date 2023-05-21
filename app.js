@@ -75,6 +75,40 @@ app.post("/new-user", (req, res) => {
 })
 
 
+app.put("/update-user/:userEmail", (req, res) => {
+    const email = req.params.userEmail
+    const findIndex = userList.findIndex((user) => user.email === email)
+    if (findIndex === -1) {
+        return res.status(400).json({ success: false, message: "user not found" })
+    }
+
+    const user = userList[findIndex]
+
+    const updateUserInfo = { ...user }
+
+    for (let key in req.body) {
+        if (req.body[key]) {
+            updateUserInfo[key] = req.body[key]
+        }
+    }
+
+    
+    console.log(updateUserInfo);
+    
+    res.status(200).json({ message: "success"})
+})
+
+
+app.delete("/delete-user/:phoneNumber", (req, res) => {
+    const number = req.params.phoneNumber
+    const findIndex = userList.findIndex((user) => user.phone === number)
+
+    userList.splice(findIndex, 1)
+
+    res.status(200).json({ data: "User Deleted" })
+})
+
+
 app.listen(PORT, () => {
     console.log(`Example app listening on port ${PORT}`);
 })
