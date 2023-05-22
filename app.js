@@ -77,23 +77,30 @@ app.post("/new-user", (req, res) => {
 
 app.put("/update-user/:userEmail", (req, res) => {
     const email = req.params.userEmail
-    const findIndex = userList.findIndex((user) => user.email === email)
+    const findIndex = userList.findIndex((user) => user.email === email) // implicit return
     if (findIndex === -1) {
         return res.status(400).json({ success: false, message: "user not found" })
     }
-
+    console.log(findIndex)
     const user = userList[findIndex]
-
-    const updateUserInfo = { ...user }
+    const updatedUser = { ...user }
+    
+    
 
     for (let key in req.body) {
-        if (req.body[key]) {
-            updateUserInfo[key] = req.body[key]
+        console.log(updatedUser)
+        if (typeof req.body[key] === "object") {
+            updatedUser[key] = {
+                ...updatedUser[key],
+                ...req.body[key]
+            }
+        } else {
+            updatedUser[key] = req.body[key]
         }
-    }
-
+    } 
     
-    console.log(updateUserInfo);
+    // Replacing the data
+    userList.splice(findIndex, 1, updatedUser)
     
     res.status(200).json({ message: "success"})
 })
